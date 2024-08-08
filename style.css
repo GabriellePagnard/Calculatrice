@@ -1,0 +1,90 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('./ressources/arriere-plan.webp'); /* Image d'arrière-plan */
+    background-size: cover; /* Couvre tout l'arrière-plan */
+    background-position: center; /* Centre l'image */
+    background-repeat: no-repeat; /* Empêche la répétition de l'image */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+}
+
+.calculator {
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.8); /* Fond noir avec légère transparence */
+    width: 360px;
+    max-width: 100%;
+    padding: 10px;
+}
+
+.calculator-screen {
+    width: 100%;
+    background-color: rgba(37, 37, 37, 0.9); /* Fond avec transparence pour l'écran */
+    color: white;
+    text-align: right;
+    padding: 20px;
+    font-size: 2.5rem;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.calculator-screen .operation {
+    font-size: 1rem;
+    color: #bbb; /* Couleur des opérations en cours */
+}
+
+.calculator-screen .result {
+    width: 100%;
+    border: none;
+    background-color: transparent; /* Fond transparent pour le résultat */
+    color: white;
+    font-size: 2.5rem;
+    text-align: right;
+    padding-right: 10px;
+    box-sizing: border-box;
+}
+
+.calculator-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+    padding: 20px;
+}
+
+.calculator-keys button {
+    height: 60px;
+    border: none;
+    background-color: rgba(128, 128, 128, 0.9); /* Boutons gris avec transparence */
+    font-size: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    color: #f5deb3; /* Texte des boutons en couleur crème */
+}
+
+.operator, .all-clear, .clear-entry, .percent, .sign {
+    background-color: rgba(160, 160, 160, 0.9); /* Boutons opérateurs et spéciaux en gris clair */
+}
+
+.equal-sign {
+    background-color: rgba(128, 128, 128, 0.9); /* Même couleur que les autres boutons */
+}
+
+button:active {
+    background-color: #ccc; /* Couleur des boutons en cours de clic */
+}
+
+.calculator-keys button:nth-last-child(4),
+.calculator-keys button:nth-last-child(3),
+.calculator-keys button:nth-last-child(2),
+.calculator-keys button:last-child {
+    grid-column: span 1;
+}
