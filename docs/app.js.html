@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: app.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: app.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Objet calculator pour stocker l'état de la calculatrice.
+ * @typedef {Object} Calculator
+ * @property {string} displayValue - La valeur actuellement affichée.
+ * @property {number|null} firstOperand - Le premier opérande pour l'opération.
+ * @property {boolean} waitingForSecondOperand - Indique si le second opérande est attendu.
+ * @property {string|null} operator - L'opérateur actuellement utilisé.
+ * @property {string} operationString - La chaîne d'opérations en cours.
+ */
+const calculator = {
+    displayValue: '0',
+    firstOperand: null,
+    waitingForSecondOperand: false,
+    operator: null,
+    operationString: ''
+};
+
+/**
+ * Met à jour l'affichage de la calculatrice.
+ */
+function updateDisplay() {
+    const display = document.querySelector('.result');
+    display.value = calculator.displayValue;
+
+    const operationDisplay = document.querySelector('.operation');
+    operationDisplay.innerText = calculator.operationString;
+}
+
+updateDisplay();
+
+const keys = document.querySelector('.calculator-keys');
+keys.addEventListener('click', (event) => {
+    const { target } = event;
+    if (!target.matches('button')) {
+        return;
+    }
+
+    if (target.classList.contains('operator')) {
+        handleOperator(target.value);
+        updateDisplay();
+        return;
+    }
+
+    if (target.classList.contains('all-clear')) {
+        resetCalculator();
+        updateDisplay();
+        return;
+    }
+
+    if (target.classList.contains('clear-entry')) {
+        clearEntry();
+        updateDisplay();
+        return;
+    }
+
+    if (target.classList.contains('equal-sign')) {
+        handleEqualSign();
+        updateDisplay();
+        return;
+    }
+
+    if (target.classList.contains('decimal')) {
+        inputDecimal(target.value);
+        updateDisplay();
+        return;
+    }
+
+    if (target.classList.contains('percent')) {
+        inputPercent();
+        updateDisplay();
+        return;
+    }
+
+    if (target.classList.contains('sign')) {
+        inputSign();
+        updateDisplay();
+        return;
+    }
+
+    inputDigit(target.value);
+    updateDisplay();
+});
+
+/**
+ * Gère l'entrée des chiffres.
+ * @param {string} digit - Le chiffre à ajouter.
+ */
+function inputDigit(digit) {
+    const { displayValue, waitingForSecondOperand } = calculator;
+
+    if (waitingForSecondOperand === true) {
+        calculator.displayValue = digit;
+        calculator.waitingForSecondOperand = false;
+    } else {
+        calculator.displayValue = displayValue === '0' ? digit : displayValue + digit;
+    }
+    calculator.operationString += digit;
+}
+
+/**
+ * Gère l'entrée des décimales.
+ * @param {string} dot - Le caractère décimal.
+ */
+function inputDecimal(dot) {
+    if (!calculator.displayValue.includes(dot)) {
+        calculator.displayValue += dot;
+        calculator.operationString += dot;
+    }
+}
+
+/**
+ * Gère l'entrée des pourcentages.
+ */
+function inputPercent() {
+    calculator.displayValue = (parseFloat(calculator.displayValue.replace(',', '.')) / 100).toString().replace('.', ',');
+    calculator.operationString += '%';
+}
+
+/**
+ * Gère l'inversion du signe du nombre.
+ */
+function inputSign() {
+    calculator.displayValue = (parseFloat(calculator.displayValue.replace(',', '.')) * -1).toString().replace('.', ',');
+    calculator.operationString += '+/-';
+}
+
+/**
+ * Gère les opérateurs.
+ * @param {string} nextOperator - L'opérateur à appliquer.
+ */
+function handleOperator(nextOperator) {
+    const { firstOperand, displayValue, operator, operationString } = calculator;
+    const inputValue = parseFloat(displayValue.replace(',', '.'));
+
+    if (operator &amp;&amp; calculator.waitingForSecondOperand) {
+        calculator.operator = nextOperator;
+        return;
+    }
+
+    if (firstOperand == null &amp;&amp; !isNaN(inputValue)) {
+        calculator.firstOperand = inputValue;
+    } else if (operator) {
+        const result = performCalculation[operator](firstOperand, inputValue);
+
+        calculator.displayValue = `${parseFloat(result.toFixed(7))}`.replace('.', ',');
+        calculator.firstOperand = result;
+    }
+
+    calculator.waitingForSecondOperand = true;
+    calculator.operator = nextOperator;
+
+    calculator.operationString += ` ${nextOperator} `;
+}
+
+/**
+ * Objets pour les fonctions de calcul.
+ */
+const performCalculation = {
+    '/': (firstOperand, secondOperand) => firstOperand / secondOperand,
+    '*': (firstOperand, secondOperand) => firstOperand * secondOperand,
+    '+': (firstOperand, secondOperand) => firstOperand + secondOperand,
+    '-': (firstOperand, secondOperand) => firstOperand - secondOperand,
+    '=': (firstOperand, secondOperand) => secondOperand
+};
+
+/**
+ * Gère le calcul du résultat.
+ */
+function handleEqualSign() {
+    const { firstOperand, displayValue, operator } = calculator;
+    const inputValue = parseFloat(displayValue.replace(',', '.'));
+
+    if (operator &amp;&amp; firstOperand != null) {
+        const result = performCalculation[operator](firstOperand, inputValue);
+        calculator.displayValue = `${parseFloat(result.toFixed(7))}`.replace('.', ',');
+
+        calculator.operationString += ` = ${calculator.displayValue}`;
+        calculator.firstOperand = null;
+        calculator.operator = null;
+        calculator.waitingForSecondOperand = false;
+    }
+}
+
+/**
+ * Réinitialise la calculatrice.
+ */
+function resetCalculator() {
+    calculator.displayValue = '0';
+    calculator.firstOperand = null;
+    calculator.waitingForSecondOperand = false;
+    calculator.operator = null;
+    calculator.operationString = '';
+}
+
+/**
+ * Efface la dernière entrée.
+ */
+function clearEntry() {
+    calculator.displayValue = calculator.displayValue.slice(0, -1) || '0';
+    calculator.operationString = calculator.operationString.slice(0, -1);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#clearEntry">clearEntry</a></li><li><a href="global.html#handleEqualSign">handleEqualSign</a></li><li><a href="global.html#handleOperator">handleOperator</a></li><li><a href="global.html#inputDecimal">inputDecimal</a></li><li><a href="global.html#inputDigit">inputDigit</a></li><li><a href="global.html#inputPercent">inputPercent</a></li><li><a href="global.html#inputSign">inputSign</a></li><li><a href="global.html#performCalculation">performCalculation</a></li><li><a href="global.html#resetCalculator">resetCalculator</a></li><li><a href="global.html#updateDisplay">updateDisplay</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Thu Aug 08 2024 17:21:54 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
