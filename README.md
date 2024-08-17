@@ -53,10 +53,10 @@ Pour l'utiliser : [Calculatrice 🧮](https://gabriellepagnard.github.io/Calcula
 
 ## 📂 Fichiers du Projet
 
-- index.html : Structure HTML de la page web.   
-- style.css : Styles CSS pour l'apparence de l'application   
-- app.js : Script JavaScript pour la logique de recherche, la gestion des résultats et les interactions avec l'API    
-- ressources/ : Dossier contenant les images et les icônes (y compris l'arrière plan, le favicon et les captures d'écran)   
+- index.html : Le fichier principal qui contient la structure HTML   
+- style.css : La feuille de style pour l’apparence   
+- app.js : Le script JavaScript qui gère la logique de calcul    
+- ressources/ : Contient les images et icônes utilisées dans le projet   
 
 <br>
 <br>
